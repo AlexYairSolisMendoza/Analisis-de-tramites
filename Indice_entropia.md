@@ -26,7 +26,7 @@ Shannon define que la entropía satisface las relaciones:
 * Si todos los intervalos o asignaciones son equiprobables, la entropía es máxima.
 
 Si para un evento X de “k” estados posibles cada uno tiene una probabilidad de aparecer $p\_i=p(x\_i)$, la entropía del evento X viene dada por la suma ponderada de la cantidad de información:  
-$\\ H(X)=-\\sum\_i p(x\_i)logp(x\_i)\\$
+$\\ H(X)=-\\sum\_i p(x\_i)logp(x\_i)$
 
 *Autoinformación*
 
@@ -34,7 +34,20 @@ Es una cantidad que mide el nivel de sorpresa de un resultado particular de un e
 La autoinformación mide que, cuanto menos probable sea un resultado, más sorprendente será. Se define como:  
 $\\ I(x\_i)=-log(p(x\_i))\\$  
 Mientras que su relación con entropía es:  
-$\\H(X)=\\sum\_i p(x\_i)I(x\_i)\\$
+$\\H(X)=\\sum\_i p(x\_i)I(x\_i)$
+
+*Z-score*
+
+Esta cantidad indica el número de desviaciones estándar a la que se encuentra un dato alejado de la media de los datos. Se calcula como:  
+$\\ z=(x-\\bar{x})/\\sigma$  
+Donde $\\ x $ son los datos observados, $\\ \\bar{x}$ es la media de la muestra y $\\ \\sigma$ es la desviación estándar de la muestra.
+
+Algunas aplicaciones de esta cantidad estadística es la estandarización para comparar puntuaciones medidas a diferentes escalas.
+
+*K-means*
+
+Es un método de agrupamiento que particiona una distribución de n datos en k grupos. Cada dato se asigna al grupo cuyo valor medio es más cercano.  
+Se pueden ilustrar estas distribuciones en grupos utilizando la partición del espacio de datos en celdas de Voronoi.
 
 *Metodología*
 
@@ -57,25 +70,35 @@ Para el tiempo, es posible distinguir dos tipos de complejidad, la primera es pu
 Se calculó la autoinformación del tiempo así como el z-score para describir la complejidad del tiempo.  Se correlacionaron estas dos cantidades entre sí y se obtuvo una correlación cercana a 0, lo que indica que muestran cantidades independientes y representan enfoques distintos del tiempo.
 
 Para generar la complejidad del tiempo se propone una combinación lineal de las características antes mencionadas de variabilidad (autoinformación) y duración (z.-score).   
-$\\ indice\_{tiempo}=x\_1I(t)+x\_2Z\_{score}$\\  
+$\\ indice\_{tiempo}=x\_1I(t)+x\_2Z\_{score}$  
 Se realiza análisis PCA para esta parte pero como las variables son independientes el PCA las muestra ortogonales y solo las rota, arrojando que las dos componentes principales explican aproximadamente el 50% de los datos.  
 Se opta por realizar análisis de sensibilidad sobre cambios en el índice al variar pesos de las componentes de la complejidad del tiempo respetando la siguiente relación.  
-$\\ indice\_{tiempo}=wI(t)+(1-w)Z\_{score}\\$
+$\\ indice\_{tiempo}=wI(t)+(1-w)Z\_{score}$
 
 Luego, se realizaron los rankings de las posiciones de los trámites utilizando un peso base y correlacionando con los rankings de un conjunto de pesos que van de 0 a 1 para formar un gráfico de estabilidad que muestra hasta qué valores de peso (w) es muy estable la correlación de rankings. Para este análisis se muestra que la elección de peso w=0.5 es de las más estables. Por lo tanto, el índice de complejidad del tiempo se toma como:  
-$\\ indice\_{tiempo}=0.5I(t)+0.5Z\_{score}\\$
+$\\ indice\_{tiempo}=0.5I(t)+0.5Z\_{score}$
 
-Construimos la autoinformación normalizada con el máximo para cada una de las otras variables y proponemos la construcción del índice de complejidad/esfuerzo como el promedio de estas autoinformaciones y el índice del tiempo. Además, se realiza otra propuesta de índice igual pero asignando pesos a cada variable, estos pesos surgen como el cociente entre la entropía de la variable correspondiente con la entropía total de cada trámite.  
+Construimos la autoinformación normalizada con el máximo para cada una de las otras variables y proponemos la construcción del índice de complejidad/esfuerzo como el promedio de estas autoinformaciones y el índice del tiempo.  
+$\\ indice\_{complejidad}=(indice\_{tiempo}+I\_{requisitos\_{norm}}+I\_{formatos\_{norm}}+I\_{digital\_{norm}}+I\_{costo\_{norm}})/5$  
+Además, se realiza otra propuesta de índice igual pero asignando pesos a cada variable, estos pesos surgen como el cociente entre la entropía de la variable correspondiente con la entropía total de cada trámite.  
+$\\ H\_{total} \= H\_{requisitos} \+ H\_{formatos} \+ H\_{digital} \+ H\_{costo} \+ H\_{tiempo}  
+$  
+$\\  w\_i=H\_i/H\_{total}$  
+$\\ indice\_{complejidad\_w}=(w\_{tiempo}indice\_{tiempo}+w\_{req}I\_{requisitos\_{norm}}+w\_{form}I\_{formatos\_{norm}}+w\_{dig}I\_{digital\_{norm}}+w\_{cost}I\_{costo\_{norm}})/5$  
 Se correlacionaron estas dos propuestas y se encontró que su correlación es de 0.94, por lo que podemos utilizar cualquiera de estas, optando por la de pesos iguales, la primera propuesta de pesos 1\.
 
-Una vez decidido el índice procedió a hacer la correlación de éste con cada una de las variables originales, mostrando que su correlación con el costo es negativa (entre más costo, menos complejo) lo que es contraintuitivo. La explicación es justo la distribución de los valores de costo, al ser 70% los que sí cuestan y 30% los que no, la variabilidad de lo datos es alta y le asigna mayor entropía a los datos, por lo que le da esta interpretación.  
+Una vez decidido el índice procedió a hacer la correlación de éste con cada una de las variables originales, mostrando que su correlación con el costo es negativa (entre más costo, menos complejo) lo que es contraintuitivo. La explicación es justo la distribución de los valores de costo, al ser 70% los que sí cuestan y 30% los que no, la variabilidad de los datos es alta y le asigna mayor entropía a los datos bajos, por lo que le da esta interpretación.  
 Concluimos que no deberíamos poder usar entropía para la variable de costo por esta misma razón y que es mejor utilizar una forma directa de la variable. Optamos por usarla directamente.
 
-Armamos de nuevo el índice de complejidad y correlacionamos de nuevo con las variables encontrando que el signo de correspondencia con el costo ya es correcto. Gracias a este análisis nos dimos cuenta que el nivel de digitalización tiene el mismo comportamiento, por lo que optamos por utilizarla reajustada para que muestre lo que queremos.
+Armamos de nuevo el índice de complejidad y correlacionamos de nuevo con las variables encontrando que el signo de correspondencia con el costo ya es correcto.  
+$\\ indice\_{complejidad}=(indice\_{tiempo}+I\_{requisitos\_{norm}}+I\_{formatos\_{norm}}+I\_{digital\_{norm}}+costo)/5$  
+Gracias a este análisis nos dimos cuenta que el nivel de digitalización tiene el mismo comportamiento, por lo que optamos por utilizarla reajustada para que muestre lo que queremos.  
+$\\ indice\_{complejidad}=(indice\_{tiempo}+I\_{requisitos\_{norm}}+I\_{formatos\_{norm}}+digital\_{norm}+costo)/5$
 
 Volvemos a realizar el índice de complejidad con estas consideraciones y correlacionamos con las variables. Observamos que la correlación con el costo es la más alta y lo interpretamos porque justamente que tiene solo dos valores y tiene distribuciones distintas con gran variabilidad. Optamos por asignar pesos y realizamos PCA. El coeficiente mostrado para tiempo casi le quita toda su interpretación por lo que descartamos este método.
 
 Como las variables describen escalas diferentes, optamos por aplicar z-score a cada una de ellas y volver a construir el índice.  
+$\\ indice\_z=(indice\_{tiempo\_z}+I\_{requisitos\_{norm\_z}}+I\_{formatos\_{norm\_z}}+I\_{digital\_{norm\_z}}+costo\_z)/5$  
 Una vez construido, aplicamos correlación con variables originales y se muestra más equilibrado, asignando mayores pesos a requisitos y formatos, le baja el peso a costo, el tiempo tiene peso bajo y la digitalización es inversa.
 
 *Análisis de resultados*
@@ -84,7 +107,7 @@ Una vez decidida la estructura del índice, se procedió a hacer gráficos repre
 
 Otro gráfico es el de comparación promedio de los valores dimensionales componentes del índice para el top 10 más complejos y el top 10 menos complejos. En este gráfico destaca que los más complejos tienen altos niveles en requisitos y formatos mientras que los menos complejos son bajos, este es el factor principal de complejidad. La digitalización es el segundo gran factor pues para los menos complejos se ven valores muy bajos. El tiempo y el costo son factores moderados.
 
-Luego de esto, se realizó un análisis con K.means para distinguir subgrupos de las componentes dimensionales del índice que permitan describir las características de los trámites. Usando el método del codo, se determinaron 4 clusters para apicar en K-means.  
+Luego de esto, se realizó un análisis con K.means para distinguir subgrupos de las componentes dimensionales del índice que permitan describir las características de los trámites. Usando el método del codo, se determinaron 4 clusters para aplicar en K-means.  
 Luego de usar K-means para 4 clusters se distingue que el cluster 0 es aquel para trámites altamente digitalizados y lentos; el cluster 1 tiene trámites estándar que cuestan, siendo un enfoque más económico; el cluster 2 es para trámites simples y gratuitos, indicando trámites eficientes; finalmente, el cluster 3 es para trámites con muchos formatos y requisitos, básicamente indicando alta burocracia.
 
 Agrupar las dependencias por porcentaje de trámites que estén dentro de cada cluster nos puede ayudar a distinguir los puntos débiles de las mismas o sus puntos fuertes.
